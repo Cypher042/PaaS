@@ -11,6 +11,8 @@ type User struct {
 	Github   string    `bson:"github"`
 }
 
+// DTOs
+
 type RegisterRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`

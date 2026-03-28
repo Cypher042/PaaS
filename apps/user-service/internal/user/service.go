@@ -21,11 +21,39 @@ func (s *Service) Register(regRequest RegisterRequest) (*User, error){
 
 	username := regRequest.Username
 
-	if(s.repo.FindUserByUsername(username) != nil){
+	if s.repo.FindUserByUsername(username) != nil {
 		return nil, fmt.Errorf("A user with the username %v already exists", username)
 	}
 
-	
+	user := User{}
+	user.ID = uuid.New()
+	user.Username = regRequest.Username
+	user.Password = regRequest.Password
+	user.Github = regRequest.Github
 
-	user = s.repo.Create()
+	err := s.repo.Create(&user)
+
+	if err != nil {
+		return nil, errors.New()
+	}
+
+	return &user, nil
+
+}
+
+func (s *Service) Login(loginRequest LoginRequest) (*User, error){
+
+	username := loginRequest.Username
+	
+	user := s.repo.FindUserByUsername(username)
+	if user  == nil {
+		return nil, fmt.Errorf("A user with the username %v does not exist", username)
+	}
+
+	if err != nil {
+		return nil, Error.New()
+	}
+
+	return &user, nil
+
 }

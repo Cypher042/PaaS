@@ -1,17 +1,16 @@
 package router
 
 import (
-	"github.com/Cypher042/PaaS/user-service/internal/handler"
+	"github.com/Cypher042/PaaS/user-service/internal/user"
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() *gin.Engine {
+func SetupRouter(h *user.Handler) *gin.Engine {
 
 	r := gin.Default()
 
-	r.GET("/login", handler.Login)
-	r.POST("/register", handler.Login)
+	r.GET("/login", h.Login)
+	r.POST("/register", h.Register)
 	return r
 
 }
-
