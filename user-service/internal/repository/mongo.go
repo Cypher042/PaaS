@@ -11,24 +11,24 @@ import (
 )
 
 type UserRepo struct {
-	collection *mongo.Collection
+	Collection *mongo.Collection
 }
 
 func (r *UserRepo) Create(u *user.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := r.collection.InsertOne(ctx, u)
+	_, err := r.Collection.InsertOne(ctx, u)
 	return err
 }
 
-func (r *UserRepo) FindByID(id uuid.UUID) (*user.User, error) {
+func (r *UserRepo) FindUserByID(id uuid.UUID) (*user.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var u user.User
 
-	err := r.collection.FindOne(ctx, bson.M{"id": id}).Decode(&u)
+	err := r.Collection.FindOne(ctx, bson.M{"id": id}).Decode(&u)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (r *UserRepo) FindUserByUsername(username string) (*user.User, error) {
 
 	var u user.User
 
-	err := r.collection.FindOne(ctx, bson.M{"username": username}).Decode(&u)
+	err := r.Collection.FindOne(ctx, bson.M{"username": username}).Decode(&u)
 	if err != nil {
 		return nil, err
 	}
