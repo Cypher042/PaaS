@@ -4,28 +4,21 @@ import (
 	"github.com/google/uuid"
 )
 
+
+type GithubResponse struct {
+	Login string `json:"login"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+	ID    int    `json:"id"`
+}
+
 type User struct {
 	ID       uuid.UUID `bson:"id"`
 	Username string    `bson:"username"`
-	Password string    `bson:"password"`
-	Github   string    `bson:"github"`
+	GithubUsername string `bson:"githubusername"`
+	GithubToken string `bson:"github_token"`
+	Email string `bson:"email"`
 }
 
 // DTOs
 
-type RegisterRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Github   string `json:"github"`
-}
-
-type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type UserResponse struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Github   string `json:"github"`
-}

@@ -9,8 +9,8 @@ func SetupRouter(h *user.Handler) *gin.Engine {
 
 	r := gin.Default()
 
-	r.GET("/login", h.Login)
-	r.POST("/register", h.Register)
+	r.GET("/auth/github", h.GithubLogin)
+	r.GET("/auth/github/callback", h.GithubCallback)
 	return r
 
 }

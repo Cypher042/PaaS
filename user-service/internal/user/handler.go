@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/oauth2"
 )
+
 type Handler struct {
 	service *Service
 }
@@ -13,40 +15,36 @@ func NewHandler(s *Service) *Handler {
 	return &Handler{service: s}
 }
 
-
-func (h *Handler) Login(c *gin.Context) {
-
-	var loginReq LoginRequest
-
-	if err := c.ShouldBind(&loginReq); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
-
-	user, err := h.service.Login(loginReq)
-
-	if err != nil{
-
-	}
-
-	c.JSON(http.StatusOK, user)
-
-
-
+func (h *Handler) GithubLogin(c *gin.Context) {
+	state := "random"
+	url := GithubOAuthConfig.AuthCodeURL(state, oauth2.AccessTypeOffline)
+	c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
-func (h *Handler) Register(c *gin.Context) {
+func (h *Handler) GithubCallback(c *gin.Context) {
+	state := c.Query("state")
+	code := c.Query("code")
 
-	var regRequest RegisterRequest
+	if state != "random" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid state"})
+		return
+	}
 
-	if err := c.ShouldBind(&regRequest); err != nil {
+	if code == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Code is missing"})
+		return
+	}
+
+	user, jwtToken, err := h.service.GithubCallback(code)
+
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	user, err := h.service.Register(regRequest)
-
-	if err != nil{
-
-	}
-
-	c.JSON(http.StatusOK, user)
+	c.SetCookie("jwt", jwtToken, 60*60*24*7, "/", "localhost", false, true)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully logged in",
+		"user":    user,
+	})
 }

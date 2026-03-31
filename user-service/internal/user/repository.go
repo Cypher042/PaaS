@@ -8,5 +8,5 @@ type UserRepository interface {
 	Create(user *User) error
 	FindUserByID(id uuid.UUID) (user *User, err error)
 	FindUserByUsername(username string) (user *User, err error)
-	
+	FindUserByGithubUsername(username string) (user *User, err error)
 }

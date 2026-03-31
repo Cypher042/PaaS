@@ -22,6 +22,14 @@ func (r *UserRepo) Create(u *user.User) error {
 	return err
 }
 
+func (r *UserRepo) Update(u *user.User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := r.Collection.UpdateOne(ctx, bson.M{"id": u.ID}, bson.M{"$set": u})
+	return err
+}
+
 func (r *UserRepo) FindUserByID(id uuid.UUID) (*user.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -44,6 +52,21 @@ func (r *UserRepo) FindUserByUsername(username string) (*user.User, error) {
 	var u user.User
 
 	err := r.Collection.FindOne(ctx, bson.M{"username": username}).Decode(&u)
+	if err != nil {
+		return nil, err
+	}
+
+	return &u, nil
+}
+
+
+func (r *UserRepo) FindUserByGithubUsername(username string) (*user.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var u user.User
+
+	err := r.Collection.FindOne(ctx, bson.M{"githubusername": username}).Decode(&u)
 	if err != nil {
 		return nil, err
 	}
