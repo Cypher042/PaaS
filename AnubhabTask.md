@@ -10,3 +10,9 @@
 More Tasks:
 
 1) Add github auth and add support for private repositories
+
+2) Add automated testing module 
+
+3) Add context everywhere 
+
+4) 
