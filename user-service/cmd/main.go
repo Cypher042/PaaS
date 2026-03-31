@@ -17,11 +17,12 @@ func main() {
 		log.Fatalf("%v",err)
 	}
 	database := database.Connect(os.Getenv("MONGODB_URI"))
-	user_repo := repository.UserRepo {
+	user_repo := &repository.UserRepo {
 		Collection: database.Collection("user-service"),
 	}
-	user_service := user.NewService(&user_repo)
-	r := router.SetupRouter()
+	user_service := user.NewService(user_repo)
+	user_handler := user.NewHandler(user_service)
+	r := router.SetupRouter(user_handler)
 	// Listen and Server in 0.0.0.0:8080
 	_ = r.Run(":8080")
 }
