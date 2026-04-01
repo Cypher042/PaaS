@@ -1,7 +1,6 @@
 package database
 
 import (
-	"context"
 	"log"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -17,7 +16,7 @@ func Connect(MONGODB_URI string) *mongo.Database {
 		log.Fatalf("error connecting to MongoDB: %v", err)
 	}
 
-	defer client.Disconnect(context.TODO())
+	// defer client.Disconnect(context.TODO())
 
 	return client.Database("PaaS")
 

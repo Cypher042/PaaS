@@ -35,16 +35,13 @@ func (h *Handler) GithubCallback(c *gin.Context) {
 		return
 	}
 
-	user, jwtToken, err := h.service.GithubCallback(code)
+	_, jwtToken, err := h.service.GithubCallback(code)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.SetCookie("jwt", jwtToken, 60*60*24*7, "/", "localhost", false, true)
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully logged in",
-		"user":    user,
-	})
+	c.SetCookie("jwt", jwtToken, 60*60*24*7, "/", "", false, true)
+	c.Redirect(http.StatusTemporaryRedirect, "http://localhost:3000/dashboard")
 }

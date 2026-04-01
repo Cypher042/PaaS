@@ -14,10 +14,11 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("%v",err)
+		log.Fatalf("%v", err)
 	}
+	user.InitOAuth()
 	database := database.Connect(os.Getenv("MONGODB_URI"))
-	user_repo := &repository.UserRepo {
+	user_repo := &repository.UserRepo{
 		Collection: database.Collection("user-service"),
 	}
 	user_service := user.NewService(user_repo)

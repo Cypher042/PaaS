@@ -42,7 +42,7 @@ func (s *Service) GithubCallback(code string) (*User, string, error) {
 	// 1. Define your payload (claims)
 	claims := jwt.MapClaims{
 		"user_id": user.ID.String(),                          // subject (the user ID)
-		"exp": time.Now().Add(time.Hour * 24 * 7).Unix(), // expiration (7 days)
+		"exp":     time.Now().Add(time.Hour * 24 * 7).Unix(), // expiration (7 days)
 	}
 
 	// 2. Create the token structural object
