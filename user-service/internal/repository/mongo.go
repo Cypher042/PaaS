@@ -10,15 +10,17 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
+const userCollection = "user-service"
+
 type UserRepo struct {
-	Collection *mongo.Collection
+	Db *mongo.Database
 }
 
 func (r *UserRepo) Create(u *user.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := r.Collection.InsertOne(ctx, u)
+	_, err := r.Db.Collection(userCollection).InsertOne(ctx, u)
 	return err
 }
 
@@ -26,7 +28,7 @@ func (r *UserRepo) Update(u *user.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := r.Collection.UpdateOne(ctx, bson.M{"id": u.ID}, bson.M{"$set": u})
+	_, err := r.Db.Collection(userCollection).UpdateOne(ctx, bson.M{"id": u.ID}, bson.M{"$set": u})
 	return err
 }
 
@@ -36,14 +38,13 @@ func (r *UserRepo) FindUserByID(id uuid.UUID) (*user.User, error) {
 
 	var u user.User
 
-	err := r.Collection.FindOne(ctx, bson.M{"id": id}).Decode(&u)
+	err := r.Db.Collection(userCollection).FindOne(ctx, bson.M{"id": id}).Decode(&u)
 	if err != nil {
 		return nil, err
 	}
 
 	return &u, nil
 }
-
 
 func (r *UserRepo) FindUserByUsername(username string) (*user.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -51,7 +52,7 @@ func (r *UserRepo) FindUserByUsername(username string) (*user.User, error) {
 
 	var u user.User
 
-	err := r.Collection.FindOne(ctx, bson.M{"username": username}).Decode(&u)
+	err := r.Db.Collection(userCollection).FindOne(ctx, bson.M{"username": username}).Decode(&u)
 	if err != nil {
 		return nil, err
 	}
@@ -59,14 +60,13 @@ func (r *UserRepo) FindUserByUsername(username string) (*user.User, error) {
 	return &u, nil
 }
 
-
 func (r *UserRepo) FindUserByGithubUsername(username string) (*user.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var u user.User
 
-	err := r.Collection.FindOne(ctx, bson.M{"githubusername": username}).Decode(&u)
+	err := r.Db.Collection(userCollection).FindOne(ctx, bson.M{"githubusername": username}).Decode(&u)
 	if err != nil {
 		return nil, err
 	}

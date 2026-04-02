@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
 )
-
 type Handler struct {
 	service *Service
 }
